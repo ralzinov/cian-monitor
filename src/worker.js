@@ -1,7 +1,7 @@
 const request = require('request');
-const TelegramService = require('./telegram.service');
+const TelegramService = require('./notify-services/telegram.service.js');
 
-const QUERY_PARAMS = require('./queryParams.json');
+const QUERY_PARAMS = require('./../queryParams.json');
 const REQUEST_HTTP_PARAMS = {
     method: 'POST',
     uri: 'https://www.cian.ru/cian-api/site/v1/offers/search/',

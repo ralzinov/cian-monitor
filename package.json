@@ -1,0 +1,16 @@
+{
+  "name": "cian-monitor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "worker.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node-telegram-bot-api": "^0.27.1",
+    "request": "^2.81.0"
+  }
+}

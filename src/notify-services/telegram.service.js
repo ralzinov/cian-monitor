@@ -3,6 +3,7 @@ const TelegramBot = require('node-telegram-bot-api');
 const BOT_TOKEN = '383953254:AAFVT2ay9VFlgjixMCHWGDhKxYrtOK-IF1c';
 const BOT_CHAT_ID = 170903698;
 const COMMANDS = ['ping'];
+const CIAN_HOST = 'https://www.cian.ru';
 
 class TelegramService {
     init () {
@@ -33,7 +34,8 @@ class TelegramService {
     }
 
     send (offerId, offerData) {
-        this.bot.sendMessage(BOT_CHAT_ID, offerId)
+        const link = `${CIAN_HOST}${offerData.link}`;
+        this.bot.sendMessage(BOT_CHAT_ID, link)
             .then(() => {
                 console.log(`Sent offer with id: ${offerId}`);
             })

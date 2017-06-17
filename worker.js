@@ -1,11 +1,12 @@
 const request = require('request');
+const config = require('./config');
 const TelegramService = require('./notify-services/telegram.service.js');
+const {POLLING_STATE, PAUSED_STATE} = require('./constants');
 
-const QUERY_PARAMS = require('./../queryParams.json');
-const REQUEST_HTTP_PARAMS = {
+const REQUEST_PARAMS = {
     method: 'POST',
     uri: 'https://www.cian.ru/cian-api/site/v1/offers/search/',
-    body: JSON.stringify(QUERY_PARAMS),
+    body: JSON.stringify(config.queryParams),
     headers: {
         'Host': 'www.cian.ru',
         'Origin': 'https://www.cian.ru',
@@ -13,34 +14,40 @@ const REQUEST_HTTP_PARAMS = {
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'
     }
 };
-const POLL_PERIOD_MINUTES = 15;
 
 class Worker {
     init() {
-        console.log('Start');
+        console.log('Init worker');
         this.offerIds = [];
-        this.notifyService = new TelegramService();
+        this.notifyService = new TelegramService(this);
         this.notifyService.init();
+        this.pollingInterval = config.pollPeriodMinutes;
 
-        this.fetchAndProcessData(REQUEST_HTTP_PARAMS);
-        this.poll(REQUEST_HTTP_PARAMS);
+        this.poll();
     }
 
-    poll(options) {
+    poll() {
+        this.state = POLLING_STATE;
+        this.fetchAndProcessData(REQUEST_PARAMS);
+
         this.pollTimeoutId = setTimeout(() => {
-            console.log('Requesting offers');
+            console.log(`Requesting offers. ${(new Date()).toLocaleString('ru')}`);
 
-            this.fetchAndProcessData(options);
-            this.poll(options);
-        }, POLL_PERIOD_MINUTES * 60 * 1000);
+            this.fetchAndProcessData(REQUEST_PARAMS);
+            this.poll();
+        }, this.pollingInterval * 60 * 1000);
     }
 
-    stopPolling () {
+    stopPolling() {
+        this.state = PAUSED_STATE;
+        console.log('Pausing polling');
         clearTimeout(this.pollTimeoutId);
+        this.pollTimeoutId = null;
     }
 
     processData(offerIds, data) {
-        console.log('Processing response data');
+        const offerLength = this.offerIds.length;
+        console.log('Processing response...');
 
         offerIds.forEach((offerId, index) => {
             if (!~this.offerIds.indexOf(offerId)) {
@@ -50,6 +57,10 @@ class Worker {
                 this.notify(offerId, data[offerId]);
             }
         });
+
+        if (this.offerIds.length === offerLength) {
+            console.log('No new offers.');
+        }
     }
 
     handleResponse(error, response, body) {
@@ -61,16 +72,17 @@ class Worker {
                 console.error(`Response parsing error: ${e}`);
             }
         } else {
-            console.error(data.statusCode);
+            console.error(response.statusCode);
         }
     }
 
     fetchAndProcessData(options) {
-        request(options, this.handleResponse.bind(this))
+        console.log('Fetching data...');
+        request(options, this.handleResponse.bind(this));
     }
 
-    notify (offerId, offerData) {
-        this.notifyService.send(offerId, offerData);
+    notify(offerId, offerData) {
+        this.notifyService.sendOffer(offerId, offerData);
     }
 }
 

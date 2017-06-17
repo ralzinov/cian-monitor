@@ -4,7 +4,7 @@
   "description": "",
   "main": "worker.js",
   "scripts": {
-    "poll": "node ./src/worker.js"
+    "poll": "node ./worker.js"
   },
   "keywords": [],
   "author": "",
@@ -12,5 +12,8 @@
   "dependencies": {
     "node-telegram-bot-api": "^0.27.1",
     "request": "^2.81.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.0.0"
   }
 }

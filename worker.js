@@ -1,7 +1,7 @@
 const request = require('request');
 const config = require('./config');
 const TelegramService = require('./notify-services/telegram.service.js');
-const {POLLING_STATE, PAUSED_STATE} = require('./constants');
+const {POLLING_STATE, PAUSED_STATE, STANDBY_STATE} = require('./constants');
 
 const REQUEST_PARAMS = {
     method: 'POST',
@@ -20,10 +20,13 @@ class Worker {
         console.log('Init worker');
         this.offerIds = [];
         this.notifyService = new TelegramService(this);
-        this.notifyService.init();
         this.pollingInterval = config.pollPeriodMinutes;
+        this.state = STANDBY_STATE;
 
-        this.poll();
+        this.notifyService.init()
+            .then(() => {
+                this.poll();
+            });
     }
 
     poll() {

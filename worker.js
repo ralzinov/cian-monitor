@@ -24,9 +24,7 @@ class Worker {
         this.state = STANDBY_STATE;
 
         this.notifyService.init()
-            .then(() => {
-                this.poll();
-            });
+            .then(() => this.poll());
     }
 
     poll() {
@@ -49,21 +47,18 @@ class Worker {
     }
 
     processData(offerIds, data) {
-        const offerLength = this.offerIds.length;
         console.log('Processing response...');
-
-        offerIds.forEach((offerId, index) => {
-            if (!~this.offerIds.indexOf(offerId)) {
-                console.log(`${index} Notifying with one new offer. ID: ${offerId}`);
-
+        const ids = offerIds.filter((id) => !this.offerIds.includes(id));
+        if (ids.length > 0) {
+            return ids.forEach((offerId, index) => {
                 this.offerIds.push(offerId);
-                this.notify(offerId, data[offerId]);
-            }
-        });
 
-        if (this.offerIds.length === offerLength) {
-            console.log('No new offers.');
+                console.log(`${index} Notifying with one new offer. ID: ${offerId}`);
+                this.notify(offerId, data[offerId]);
+            });
         }
+
+        console.log('No new offers.');
     }
 
     handleResponse(error, response, body) {
@@ -75,7 +70,7 @@ class Worker {
                 console.error(`Response parsing error: ${e}`);
             }
         } else {
-            console.error(response.statusCode);
+            console.error(`Request error: ${response.statusCode}`);
         }
     }
 

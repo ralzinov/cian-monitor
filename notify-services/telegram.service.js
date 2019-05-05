@@ -2,18 +2,24 @@ const TelegramBot = require('node-telegram-bot-api');
 const config = require('../config');
 const {POLLING_STATE, PAUSED_STATE} = require('../constants');
 
-const COMMANDS = ['help', 'resume', 'pause', 'setinterval', 'state'];
+const COMMANDS = {
+    START: 'start',
+    HELP: 'help',
+    RESUME: 'resume',
+    PAUSE: 'pause',
+    SET_INTERVAL: 'setinterval',
+    STATE: 'state'
+};
+
 const CIAN_HOST = 'https://www.cian.ru';
 
-const getHelpMessage = (chatId) => `
-Your chat id: ${chatId}
-Commands:
-To resume polling please type: /resume
-To pause polling please type: /pause
-To set polling interval: /setinterval <minutes>
-To show state, please type: /state
-To show this help please type: /help
-`;
+const getHelpMessage = (chatId) => `Your chat id: ${chatId}\n\n`+
+    'Commands: \n' +
+    `To resume polling please type: /${COMMANDS.RESUME} \n` +
+    `To pause polling please type: /${COMMANDS.PAUSE} \n` +
+    `To set polling interval: /${COMMANDS.SET_INTERVAL} <minutes> \n` +
+    `To show state, please type: /${COMMANDS.STATE} \n` +
+    `To show this help please type: /${COMMANDS.HELP} \n`;
 
 class TelegramService {
     constructor(worker) {
@@ -28,7 +34,8 @@ class TelegramService {
             polling: true
         });
 
-        COMMANDS.forEach((command) => {
+        Object.keys(COMMANDS).forEach((key) => {
+            const command = COMMANDS[key];
             const regexp = new RegExp(`(/${command}) ?(.+)?`);
 
             this.bot.onText(regexp, (msg, match) => {
@@ -52,9 +59,9 @@ class TelegramService {
         let responseMessage = 'Unknown command. Please type /help to show manual';
         console.log(`Got command: ${command} ${value || ''}`);
 
-        if (command === '/help') {
+        if (this.isCommand(command, COMMANDS.HELP) || this.isCommand(command, COMMANDS.START)) {
             responseMessage = getHelpMessage(this.chatId);
-        } else if (command === '/resume') {
+        } else if (this.isCommand(COMMANDS.RESUME)) {
             if (this.worker.state !== POLLING_STATE) {
                 this.worker.poll();
                 responseMessage = 'Service resumed polling. To pause it please type: /pause';
@@ -62,7 +69,7 @@ class TelegramService {
                 responseMessage = 'Service is polling already. To pause it type: /pause';
             }
 
-        } else if (command === '/pause') {
+        } else if (this.isCommand(command, COMMANDS.PAUSE)) {
             if (this.worker.state !== PAUSED_STATE) {
                 this.worker.stopPolling();
                 responseMessage = 'Service paused. To resume polling, please type: /resume';
@@ -70,7 +77,7 @@ class TelegramService {
                 responseMessage = 'Service paused already. To resume it type: /resume';
             }
 
-        } else if (command === '/setinterval') {
+        } else if (this.isCommand(command, COMMANDS.SET_INTERVAL)) {
             const interval = parseFloat(value, 10);
 
             if (!isNaN(interval) && interval > 0) {
@@ -79,18 +86,16 @@ class TelegramService {
             } else {
                 responseMessage = 'Incorrect interval value specified. Interval should be number and greater than zero';
             }
-        } else if (command === '/state') {
+        } else if (this.isCommand(command, COMMANDS.STATE)) {
             responseMessage = `Status: ${this.worker.state.toUpperCase()}\nPolling interval: ${this.worker.pollingInterval} min`;
         }
 
         this.sendMessage(responseMessage)
-            .then(() => console.log('Sent message'))
-            .catch((e) => console.log(`Sending message error: ${e}`));
+            .then(() => console.log('Done.'))
+            .catch((e) => console.log(`Error while sending message: \n${JSON.stringify(e, null, 4)}`));
     }
 
     sendOffer(offerId, offerData) {
-        console.log(`Sent offer with id: ${offerId}`);
-
         const link = `${CIAN_HOST}${offerData.link}`;
         this.sendMessage(link)
             .then(() => {
@@ -103,6 +108,10 @@ class TelegramService {
 
     sendMessage(message) {
         return this.bot.sendMessage(this.chatId, message);
+    }
+
+    isCommand(str, command) {
+        return `/${command}` === str;
     }
 }
 

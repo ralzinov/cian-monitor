@@ -10,8 +10,6 @@ If you want to get new offers as soon as posible.
 3. Run `npm install` and then `npm run poll`
 4. Type any command f.e. /help to bot to init service
 5. Type one of command to manage service
-6. ???
-7. PROFIT
 
 ### Commands:
 - `/help` - display help

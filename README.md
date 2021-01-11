@@ -1,8 +1,8 @@
 # Cian-Monitor
-NodeJS service that poll cian.ru with parameters and notify you if new item is available. Currently Telegram notify is only available.
+NodeJS service that polls cian.ru with parameters and notify you if new item is available. Currently Telegram notify is only available.
 
 ## Why to use it?
-If you want to get new offers as soon as posible. 
+If you want to get new offers as soon as posible 
 
 ### How to use it:
 1. Make search request with parameters you need. Save request json object to queryParameters.js
@@ -16,4 +16,4 @@ If you want to get new offers as soon as posible.
 - `/pause` - pause service polling
 - `/resume` - resume service polling
 - `/state` - show service status
-- `/setinterval <minutes>` - set polling interval in minutes. Should be greater than zero
+- `/setinterval <minutes>` - set polling interval in minutes. Default is 5. Should be greater than zero

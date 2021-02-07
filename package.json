@@ -2,16 +2,11 @@
   "name": "cian-monitor",
   "version": "1.0.0",
   "description": "",
-  "main": "worker.js",
-  "scripts": {
-    "poll": "node ./worker.js"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "node-telegram-bot-api": "^0.51.0",
-    "request": "^2.88.2"
+    "firebase": "^8.2.6"
   },
   "devDependencies": {
     "eslint": "^7.17.0"

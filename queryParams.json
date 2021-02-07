@@ -1,118 +1,86 @@
 {
-  "repair": {
-    "type": "terms",
-    "value": [
-      2,
-      3,
-      4
-    ]
-  },
-  "has_furniture": {
-    "type": "term",
-    "value": true
-  },
-  "geo": {
-    "type": "geo",
-    "value": [
-      {
-        "type": "underground",
-        "id": 59
-      },
-      {
-        "type": "underground",
-        "id": 67
-      },
-      {
-        "type": "underground",
-        "id": 240
-      },
-      {
-        "type": "underground",
-        "id": 32
-      },
-      {
-        "type": "underground",
-        "id": 271
-      },
-      {
-        "type": "underground",
-        "id": 270
-      },
-      {
-        "type": "underground",
-        "id": 117
-      },
-      {
-        "type": "underground",
-        "id": 152
-      },
-      {
-        "type": "underground",
-        "id": 243
-      },
-      {
-        "type": "underground",
-        "id": 27
+    "sort": {
+      "type": "term",
+      "value": "price_object_order"
+    },
+    "foot_min": {
+      "type": "range",
+      "value": {
+        "lte": 10
       }
-    ]
-  },
-  "has_washer": {
-    "type": "term",
-    "value": true
-  },
-  "only_foot": {
-    "type": "term",
-    "value": "2"
-  },
-  "wp": {
-    "type": "term",
-    "value": true
-  },
-  "region": {
-    "type": "terms",
-    "value": [
-      1
-    ]
-  },
-  "foot_min": {
-    "type": "range",
-    "value": {
-      "lte": 20
+    },
+    "_type": "flatrent",
+    "room": {
+      "type": "terms",
+      "value": [1, 2]
+    },
+    "has_fridge": {
+      "type": "term",
+      "value": true
+    },
+    "repair": {
+      "type": "terms",
+      "value": [3, 4]
+    },
+    "for_day": {
+      "type": "term",
+      "value": "!1"
+    },
+    "price": {
+      "type": "range",
+      "value": {
+        "lte": 50000
+      }
+    },
+    "internet": {
+      "type": "term",
+      "value": true
+    },
+    "only_foot": {
+      "type": "term",
+      "value": "2"
+    },
+    "engine_version": {
+      "type": "term",
+      "value": 2
+    },
+    "currency": {
+      "type": "term",
+      "value": 2
+    },
+    "is_first_floor": {
+      "type": "term",
+      "value": false
+    },
+    "has_kitchen_furniture": {
+      "type": "term",
+      "value": true
+    },
+    "has_washer": {
+      "type": "term",
+      "value": true
+    },
+    "has_furniture": {
+      "type": "term",
+      "value": true
+    },
+    "geo": {
+      "type": "geo",
+      "value": [{
+        "type": "underground",
+        "id": 85
+      }, {
+        "type": "underground",
+        "id": 86
+      }, {
+        "type": "underground",
+        "id": 103
+      }, {
+        "type": "underground",
+        "id": 118
+      }, {
+        "type": "underground",
+        "id": 143
+      }]
     }
-  },
-  "has_fridge": {
-    "type": "term",
-    "value": true
-  },
-  "for_day": {
-    "type": "term",
-    "value": "!1"
-  },
-  "room": {
-    "type": "terms",
-    "value": [
-      1,
-      9
-    ]
-  },
-  "currency": {
-    "type": "term",
-    "value": 2
-  },
-  "_type": "flatrent",
-  "price": {
-    "type": "range",
-    "value": {
-      "gte": 25000,
-      "lte": 28000
-    }
-  },
-  "is_first_floor": {
-    "type": "term",
-    "value": false
-  },
-  "engine_version": {
-    "type": "term",
-    "value": 2
-  }
 }
